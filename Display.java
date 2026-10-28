@@ -47,9 +47,7 @@ public class Display extends Canvas implements Runnable
         {1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
     
-    private double player_x = 1.5;
-    private double player_y = 3.5;
-    private double player_angle = 0.0;
+    private Player player = new Player(1.5, 3.5, 0.0);
     
     private double imp_x = 9.5;
     private double imp_y = 3.5;
@@ -143,23 +141,7 @@ public class Display extends Canvas implements Runnable
         time_current = System.currentTimeMillis();
         time_delta = time_current - time_last;
         
-        double motion_x = 0;
-        double motion_y = 0;
-        if (input.keyboard[KeyEvent.VK_W])
-            motion_x += 0.002 * time_delta;
-        if (input.keyboard[KeyEvent.VK_S])
-            motion_x -= 0.002 * time_delta;
-        if (input.keyboard[KeyEvent.VK_A])
-            motion_y += 0.002 * time_delta;
-        if (input.keyboard[KeyEvent.VK_D])
-            motion_y -= 0.002 * time_delta;
-        if (input.keyboard[KeyEvent.VK_LEFT])
-            player_angle += 0.00157 * time_delta;
-        if (input.keyboard[KeyEvent.VK_RIGHT])
-            player_angle -= 0.00157 * time_delta;
-        
-        player_x += motion_x * Math.cos(player_angle) - motion_y * Math.sin(player_angle);
-        player_y += motion_x * Math.sin(player_angle) + motion_y * Math.cos(player_angle);
+        player.update(time_delta, input, renderer.walls);
     }
     
     private void render()
@@ -172,7 +154,7 @@ public class Display extends Canvas implements Runnable
         
         renderer.clean();
         
-        renderer.setCamera(player_x, player_y, player_angle);
+        renderer.setCamera(player.x, player.y, player.angle);
         
         renderer.drawFlats();
         renderer.drawWalls();
