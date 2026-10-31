@@ -1,11 +1,9 @@
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.util.Random;
 import javax.imageio.ImageIO;
@@ -48,6 +46,9 @@ public class Display extends Canvas implements Runnable
     };
     
     private Player player = new Player(1.5, 3.5, 0.0);
+    private Hud hud = new Hud();
+    private GameState state = GameState.PLAYING;
+    private boolean escape_was_down = false;
     
     private double imp_x = 9.5;
     private double imp_y = 3.5;
@@ -141,7 +142,21 @@ public class Display extends Canvas implements Runnable
         time_current = System.currentTimeMillis();
         time_delta = time_current - time_last;
         
-        player.update(time_delta, input, renderer.walls);
+        boolean escape_is_down = input.keyboard[KeyEvent.VK_ESCAPE];
+        if (escape_is_down && escape_was_down == false) {
+            if (state == GameState.PLAYING)
+                state = GameState.PAUSED;
+            else if (state == GameState.PAUSED)
+                state = GameState.PLAYING;
+        }
+        escape_was_down = escape_is_down;
+        
+        if (state == GameState.PLAYING) {
+            player.update(time_delta, input, renderer.walls);
+            
+            if (player.health <= 0)
+                state = GameState.LOST;
+        }
     }
     
     private void render()
@@ -160,6 +175,10 @@ public class Display extends Canvas implements Runnable
         renderer.drawWalls();
         renderer.drawThing(imp_x, imp_y, 1 * Math.PI, imp_textures);
         renderer.drawSprite(dopefish_x, dopefish_y, dopefish_texture);
+        
+        hud.draw(renderer.device, player);
+        if (state == GameState.PAUSED)
+            hud.drawPause(renderer.device);
         
         Graphics g = bs.getDrawGraphics();
         g.drawImage(renderer.device, 0, 0, WIDTH, HEIGHT, null); // Does this cause a race condition? I hope not... Supposedly this function *can* be asynchronous.

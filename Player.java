@@ -6,11 +6,23 @@ public class Player
     public double y;
     public double angle;
     
+    public int max_health = 100;
+    public int health = 100;
+    public int ammo = 20;
+    public int keys = 0;
+    
     public Player(double x, double y, double angle)
     {
         this.x = x;
         this.y = y;
         this.angle = angle;
+    }
+    
+    public void takeDamage(int amount)
+    {
+        health -= amount;
+        if (health < 0)
+            health = 0;
     }
     
     public void update(double time_delta, Input input, int[][] walls)
