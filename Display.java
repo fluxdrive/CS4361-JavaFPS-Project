@@ -47,7 +47,8 @@ public class Display extends Canvas implements Runnable
     
     private Player player = new Player(1.5, 3.5, 0.0);
     private Hud hud = new Hud();
-    private GameState state = GameState.PLAYING;
+    private Menu menu = new Menu();
+    private GameState state = GameState.MENU;
     private boolean escape_was_down = false;
     
     private double imp_x = 9.5;
@@ -151,12 +152,26 @@ public class Display extends Canvas implements Runnable
         }
         escape_was_down = escape_is_down;
         
+        if (state == GameState.MENU) {
+            int choice = menu.update(input);
+            if (choice == Menu.START)
+                newGame();
+            if (choice == Menu.QUIT)
+                System.exit(0);
+        }
+        
         if (state == GameState.PLAYING) {
             player.update(time_delta, input, renderer.walls);
             
             if (player.health <= 0)
                 state = GameState.LOST;
         }
+    }
+    
+    private void newGame()
+    {
+        player = new Player(1.5, 3.5, 0.0);
+        state = GameState.PLAYING;
     }
     
     private void render()
@@ -176,9 +191,13 @@ public class Display extends Canvas implements Runnable
         renderer.drawThing(imp_x, imp_y, 1 * Math.PI, imp_textures);
         renderer.drawSprite(dopefish_x, dopefish_y, dopefish_texture);
         
-        hud.draw(renderer.device, player);
-        if (state == GameState.PAUSED)
-            hud.drawPause(renderer.device);
+        if (state == GameState.MENU) {
+            menu.draw(renderer.device, time_current);
+        } else {
+            hud.draw(renderer.device, player);
+            if (state == GameState.PAUSED)
+                hud.drawPause(renderer.device);
+        }
         
         Graphics g = bs.getDrawGraphics();
         g.drawImage(renderer.device, 0, 0, WIDTH, HEIGHT, null); // Does this cause a race condition? I hope not... Supposedly this function *can* be asynchronous.
