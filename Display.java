@@ -13,7 +13,7 @@ public class Display extends Canvas implements Runnable
 {
     // Guaranteed to fit within the ancient 1360x768 screens anyone may still have.
     public static final int WIDTH = 960;
-    public static final int HEIGHT = 960;
+    public static final int HEIGHT = 720;
     
     private Thread thread;
     private boolean running = false;
@@ -53,11 +53,11 @@ public class Display extends Canvas implements Runnable
     
     private double imp_x = 9.5;
     private double imp_y = 3.5;
-    public BufferedImage[] imp_textures;
+    public Renderer.Texture[] imp_textures;
     
     private double dopefish_x = 10.5;
     private double dopefish_y = 4.5;
-    public BufferedImage dopefish_texture;
+    public Renderer.Texture dopefish_texture;
     
     private double time_current;
     private double time_last;
@@ -72,13 +72,13 @@ public class Display extends Canvas implements Runnable
         setMaximumSize(size);
         
         renderer = new Renderer();
-        renderer.walls = map2;
+        renderer.setWalls(map2);
         
         try {
-            renderer.wall_textures = new BufferedImage[] {ImageIO.read(new File("wolf3d_wall.png")), ImageIO.read(new File("mandril.png")), ImageIO.read(new File("framed_mona_lisa_2.png"))};
-            renderer.floor_texture = ImageIO.read(new File("sand.png"));
-            renderer.ceiling_texture = ImageIO.read(new File("sky.png"));
-            imp_textures = new BufferedImage[] {
+            renderer.setWallTextures(Renderer.Texture.read(new BufferedImage[] {ImageIO.read(new File("rock.png")), ImageIO.read(new File("mandril.png")), ImageIO.read(new File("rock_lisa.png"))}));
+            renderer.setFloorTexture(new Renderer.Texture(ImageIO.read(new File("sand3.png"))));
+            renderer.setCeilingTexture(new Renderer.Texture(ImageIO.read(new File("rock.png"))));
+            imp_textures = Renderer.Texture.read(new BufferedImage[] {
                 ImageIO.read(new File("imp0.png")),
                 ImageIO.read(new File("imp1.png")),
                 ImageIO.read(new File("imp2.png")),
@@ -87,8 +87,8 @@ public class Display extends Canvas implements Runnable
                 ImageIO.read(new File("imp5.png")),
                 ImageIO.read(new File("imp6.png")),
                 ImageIO.read(new File("imp7.png"))
-            };
-            dopefish_texture = ImageIO.read(new File("dopefish.png"));
+            });
+            dopefish_texture = new Renderer.Texture(ImageIO.read(new File("dopefish.png")));
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -161,7 +161,7 @@ public class Display extends Canvas implements Runnable
         }
         
         if (state == GameState.PLAYING) {
-            player.update(time_delta, input, renderer.walls);
+            player.update(time_delta, input, map2);
             
             if (player.health <= 0)
                 state = GameState.LOST;
@@ -186,21 +186,23 @@ public class Display extends Canvas implements Runnable
         
         renderer.setCamera(player.x, player.y, player.angle);
         
-        renderer.drawFlats();
-        renderer.drawWalls();
-        renderer.drawThing(imp_x, imp_y, 1 * Math.PI, imp_textures);
-        renderer.drawSprite(dopefish_x, dopefish_y, dopefish_texture);
+        renderer.putThing(imp_x, imp_y, 1 * Math.PI, imp_textures);
+        renderer.putSprite(dopefish_x, dopefish_y, dopefish_texture);
+        
+        renderer.draw();
+        
+        BufferedImage device = renderer.getRender();
         
         if (state == GameState.MENU) {
-            menu.draw(renderer.device, time_current);
+            menu.draw(device, time_current);
         } else {
-            hud.draw(renderer.device, player);
+            hud.draw(device, player);
             if (state == GameState.PAUSED)
-                hud.drawPause(renderer.device);
+                hud.drawPause(device);
         }
         
         Graphics g = bs.getDrawGraphics();
-        g.drawImage(renderer.device, 0, 0, WIDTH, HEIGHT, null); // Does this cause a race condition? I hope not... Supposedly this function *can* be asynchronous.
+        g.drawImage(device, 0, 0, WIDTH, HEIGHT, null); // Does this cause a race condition? I hope not... Supposedly this function *can* be asynchronous.
         g.dispose();
         bs.show();
     }
