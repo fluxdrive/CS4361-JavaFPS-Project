@@ -16,11 +16,16 @@ public class Menu
     private static final int MAIN = 0;
     private static final int SETTINGS = 1;
     private static final int HELP = 2;
+    private static final int LEVELS = 3;
     
     public int volume = 5;
+    public int unlocked = 1;
+    public int level = 1;
+    public String note = "";
     
     private String title = "JAVA FPS";
     private String[] main_options = {"START NEW GAME", "HELP", "SETTINGS", "QUIT"};
+    private String[] level_options = {"LEVEL 1", "LEVEL 2", "LEVEL 3", "BACK"};
     private String[] settings_options = {"VOLUME", "BACK"};
     private String[] help_keys = {"W", "S", "A", "D", "LEFT / RIGHT", "ESC"};
     private String[] help_actions = {"Move forward", "Move backward", "Move left", "Move right", "Look around", "Pause"};
@@ -31,6 +36,7 @@ public class Menu
     private int screen = MAIN;
     private int selected = 0;
     private int settings_selected = 0;
+    private int level_selected = 0;
     private boolean[] was_down = new boolean[KeyEvent.KEY_LAST + 1];
     
     private double scale = 0;
@@ -48,6 +54,18 @@ public class Menu
         return input.keyboard[key] && was_down[key] == false;
     }
     
+    public void showLevels(Input input)
+    {
+        screen = LEVELS;
+        System.arraycopy(input.keyboard, 0, was_down, 0, was_down.length);
+    }
+    
+    public void showMain(Input input)
+    {
+        screen = MAIN;
+        System.arraycopy(input.keyboard, 0, was_down, 0, was_down.length);
+    }
+    
     public int update(Input input)
     {
         int result = NONE;
@@ -58,6 +76,8 @@ public class Menu
             updateSettings(input);
         else if (screen == HELP)
             updateHelp(input);
+        else if (screen == LEVELS)
+            result = updateLevels(input);
         
         System.arraycopy(input.keyboard, 0, was_down, 0, was_down.length);
         return result;
@@ -76,8 +96,10 @@ public class Menu
             selected = 0;
         
         if (pressed(input, KeyEvent.VK_ENTER)) {
-            if (selected == 0)
-                return START;
+            if (selected == 0) {
+                note = "";
+                screen = LEVELS;
+            }
             else if (selected == 1)
                 screen = HELP;
             else if (selected == 2)
@@ -119,6 +141,39 @@ public class Menu
             screen = MAIN;
     }
     
+    private int updateLevels(Input input)
+    {
+        if (pressed(input, KeyEvent.VK_UP) || pressed(input, KeyEvent.VK_W)) {
+            level_selected -= 1;
+            note = "";
+        }
+        if (pressed(input, KeyEvent.VK_DOWN) || pressed(input, KeyEvent.VK_S)) {
+            level_selected += 1;
+            note = "";
+        }
+        
+        if (level_selected < 0)
+            level_selected = level_options.length - 1;
+        if (level_selected >= level_options.length)
+            level_selected = 0;
+        
+        if (pressed(input, KeyEvent.VK_ESCAPE))
+            screen = MAIN;
+        
+        if (pressed(input, KeyEvent.VK_ENTER)) {
+            if (level_selected == 3) {
+                screen = MAIN;
+            } else if (level_selected < unlocked) {
+                level = level_selected + 1;
+                return START;
+            } else {
+                note = "FINISH THE PREVIOUS LEVEL FIRST";
+            }
+        }
+        
+        return NONE;
+    }
+    
     private void updateHelp(Input input)
     {
         if (pressed(input, KeyEvent.VK_ENTER) || pressed(input, KeyEvent.VK_ESCAPE))
@@ -146,6 +201,8 @@ public class Menu
         String heading = title;
         if (screen == HELP)
             heading = "CONTROLS";
+        if (screen == LEVELS)
+            heading = "LEVELS";
         drawCentered(g, heading, width, height / 5 + s(2));
         g.setColor(Color.RED);
         drawCentered(g, heading, width, height / 5);
@@ -157,10 +214,14 @@ public class Menu
             drawOptions(g, width, height, settings_options, settings_selected);
         else if (screen == HELP)
             drawHelp(g, width, height);
+        else if (screen == LEVELS)
+            drawOptions(g, width, height, level_options, level_selected);
         
         int footer_y = height * 2 / 5 + s(26) * 3 + s(36);
         if (screen == SETTINGS)
             footer_y = height * 2 / 5 + s(26) + s(36);
+        if (screen == LEVELS)
+            footer_y = height * 2 / 5 + s(26) * 3 + s(36);
         if (screen == HELP)
             footer_y = height * 2 / 5 + s(18) * 5 + s(36);
         
@@ -172,6 +233,10 @@ public class Menu
             drawCentered(g, "UP/DOWN: choose   LEFT/RIGHT: volume   ESC: back", width, footer_y);
         else if (screen == HELP)
             drawCentered(g, "ENTER or ESC: back", width, footer_y);
+        else if (screen == LEVELS && note.length() > 0)
+            drawCentered(g, note, width, footer_y);
+        else if (screen == LEVELS)
+            drawCentered(g, "UP/DOWN: choose   ENTER: play   ESC: back", width, footer_y);
         
         g.dispose();
     }
@@ -186,9 +251,15 @@ public class Menu
             if (screen == SETTINGS && i == 0)
                 text = "VOLUME [" + volumeBar() + "]";
             
+            boolean locked = screen == LEVELS && i < 3 && i >= unlocked;
+            if (locked)
+                text = text + " (LOCKED)";
+            
             if (i == chosen) {
                 g.setColor(Color.YELLOW);
                 text = "> " + text + " <";
+            } else if (locked) {
+                g.setColor(Color.GRAY);
             } else {
                 g.setColor(Color.WHITE);
             }

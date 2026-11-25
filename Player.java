@@ -10,6 +10,7 @@ public class Player
     public int health = 100;
     public int ammo = 20;
     public int keys = 0;
+    public boolean has_gun = false;
     
     public Player(double x, double y, double angle)
     {

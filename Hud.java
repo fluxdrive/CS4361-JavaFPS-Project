@@ -89,6 +89,40 @@ public class Hud
         g.dispose();
     }
     
+    public void drawMessage(BufferedImage screen, String text)
+    {
+        Graphics2D g = screen.createGraphics();
+        g.setFont(font);
+        
+        int width = screen.getWidth();
+        
+        g.setColor(new Color(0, 0, 0, 170));
+        g.fillRect(0, 28, width, 18);
+        
+        g.setColor(Color.WHITE);
+        drawCentered(g, text, width, 41);
+        
+        g.dispose();
+    }
+    
+    public void drawEnd(BufferedImage screen, String title, String hint)
+    {
+        Graphics2D g = screen.createGraphics();
+        g.setFont(font);
+        
+        int width = screen.getWidth();
+        int height = screen.getHeight();
+        
+        g.setColor(new Color(0, 0, 0, 170));
+        g.fillRect(0, 0, width, height);
+        
+        g.setColor(Color.WHITE);
+        drawCentered(g, title, width, height / 2 - 10);
+        drawCentered(g, hint, width, height / 2 + 12);
+        
+        g.dispose();
+    }
+    
     private void drawCentered(Graphics2D g, String text, int width, int y)
     {
         FontMetrics metrics = g.getFontMetrics();
