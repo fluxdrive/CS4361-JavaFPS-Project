@@ -19,13 +19,12 @@ public class Menu
     private static final int LEVELS = 3;
     
     public int volume = 5;
-    public int unlocked = 1;
     public int level = 1;
     public String note = "";
     
     private String title = "JAVA FPS";
     private String[] main_options = {"START NEW GAME", "HELP", "SETTINGS", "QUIT"};
-    private String[] level_options = {"LEVEL 1", "LEVEL 2", "LEVEL 3", "BACK"};
+    private String[] level_options = {"1. ABANDONED CASTLE", "2. UNDERGROUND LAB", "3. FROZEN CAVERNS", "BACK"};
     private String[] settings_options = {"VOLUME", "BACK"};
     private String[] help_keys = {"W", "S", "A", "D", "LEFT / RIGHT", "ESC"};
     private String[] help_actions = {"Move forward", "Move backward", "Move left", "Move right", "Look around", "Pause"};
@@ -163,11 +162,9 @@ public class Menu
         if (pressed(input, KeyEvent.VK_ENTER)) {
             if (level_selected == 3) {
                 screen = MAIN;
-            } else if (level_selected < unlocked) {
+            } else {
                 level = level_selected + 1;
                 return START;
-            } else {
-                note = "FINISH THE PREVIOUS LEVEL FIRST";
             }
         }
         
@@ -251,15 +248,9 @@ public class Menu
             if (screen == SETTINGS && i == 0)
                 text = "VOLUME [" + volumeBar() + "]";
             
-            boolean locked = screen == LEVELS && i < 3 && i >= unlocked;
-            if (locked)
-                text = text + " (LOCKED)";
-            
             if (i == chosen) {
                 g.setColor(Color.YELLOW);
                 text = "> " + text + " <";
-            } else if (locked) {
-                g.setColor(Color.GRAY);
             } else {
                 g.setColor(Color.WHITE);
             }

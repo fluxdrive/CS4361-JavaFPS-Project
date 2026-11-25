@@ -13,7 +13,7 @@ public class Display extends Canvas implements Runnable
 {
     // Guaranteed to fit within the ancient 1360x768 screens anyone may still have.
     public static final int WIDTH = 960;
-    public static final int HEIGHT = 960;
+    public static final int HEIGHT = 720;
     
     private Thread thread;
     private boolean running = false;
@@ -72,10 +72,11 @@ public class Display extends Canvas implements Runnable
     private boolean escape_was_down = false;
     private boolean enter_was_down = false;
     private int current_level = 1;
+    private int[][] current_map;
     
     private Item[] items;
-    private BufferedImage[] item_textures;
-    private BufferedImage exit_texture;
+    private Renderer.Texture[] item_textures;
+    private Renderer.Texture exit_texture;
     private double exit_x = 23.5;
     private double exit_y = 2.5;
     private int door_row = 5;
@@ -85,11 +86,11 @@ public class Display extends Canvas implements Runnable
     
     private double imp_x = 9.5;
     private double imp_y = 3.5;
-    public BufferedImage[] imp_textures;
+    public Renderer.Texture[] imp_textures;
     
     private double dopefish_x = 10.5;
     private double dopefish_y = 4.5;
-    public BufferedImage dopefish_texture;
+    public Renderer.Texture dopefish_texture;
     
     private double time_current;
     private double time_last;
@@ -104,13 +105,14 @@ public class Display extends Canvas implements Runnable
         setMaximumSize(size);
         
         renderer = new Renderer();
-        renderer.walls = level1;
+        current_map = level1;
+        renderer.setWalls(current_map);
         
         try {
-            renderer.wall_textures = new BufferedImage[] {ImageIO.read(new File("castle_wall.png")), ImageIO.read(new File("castle_wall_mossy.png")), ImageIO.read(new File("castle_torch.png")), ImageIO.read(new File("castle_banner.png")), ImageIO.read(new File("castle_window.png")), ImageIO.read(new File("castle_door.png"))};
-            renderer.floor_texture = ImageIO.read(new File("castle_floor.png"));
-            renderer.ceiling_texture = ImageIO.read(new File("castle_ceiling.png"));
-            imp_textures = new BufferedImage[] {
+            renderer.setWallTextures(Renderer.Texture.read(new BufferedImage[] {ImageIO.read(new File("castle_wall.png")), ImageIO.read(new File("castle_wall_mossy.png")), ImageIO.read(new File("castle_torch.png")), ImageIO.read(new File("castle_banner.png")), ImageIO.read(new File("castle_window.png")), ImageIO.read(new File("castle_door.png"))}));
+            renderer.setFloorTexture(new Renderer.Texture(ImageIO.read(new File("castle_floor.png"))));
+            renderer.setCeilingTexture(new Renderer.Texture(ImageIO.read(new File("castle_ceiling.png"))));
+            imp_textures = Renderer.Texture.read(new BufferedImage[] {
                 ImageIO.read(new File("imp0.png")),
                 ImageIO.read(new File("imp1.png")),
                 ImageIO.read(new File("imp2.png")),
@@ -119,15 +121,15 @@ public class Display extends Canvas implements Runnable
                 ImageIO.read(new File("imp5.png")),
                 ImageIO.read(new File("imp6.png")),
                 ImageIO.read(new File("imp7.png"))
-            };
-            dopefish_texture = ImageIO.read(new File("dopefish.png"));
-            item_textures = new BufferedImage[] {
+            });
+            dopefish_texture = new Renderer.Texture(ImageIO.read(new File("dopefish.png")));
+            item_textures = Renderer.Texture.read(new BufferedImage[] {
                 ImageIO.read(new File("key.png")),
                 ImageIO.read(new File("ammo.png")),
                 ImageIO.read(new File("health.png")),
                 ImageIO.read(new File("gun.png"))
-            };
-            exit_texture = ImageIO.read(new File("castle_exit.png"));
+            });
+            exit_texture = new Renderer.Texture(ImageIO.read(new File("castle_exit.png")));
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -205,7 +207,7 @@ public class Display extends Canvas implements Runnable
         }
         
         if (state == GameState.PLAYING) {
-            player.update(time_delta, input, renderer.walls);
+            player.update(time_delta, input, current_map);
             
             checkItems();
             checkDoor();
@@ -240,7 +242,7 @@ public class Display extends Canvas implements Runnable
     private void newGame()
     {
         player = new Player(2.5, 2.5, 0.0);
-        renderer.walls[door_row][door_col] = 6;
+        current_map[door_row][door_col] = 6;
         items = makeItems();
         state = GameState.PLAYING;
     }
@@ -296,7 +298,7 @@ public class Display extends Canvas implements Runnable
     
     private void checkDoor()
     {
-        if (renderer.walls[door_row][door_col] == 0)
+        if (current_map[door_row][door_col] == 0)
             return;
         
         double dx = Math.abs(door_col + 0.5 - player.x);
@@ -314,7 +316,7 @@ public class Display extends Canvas implements Runnable
         
         if (player.keys > 0) {
             player.keys -= 1;
-            renderer.walls[door_row][door_col] = 0;
+            current_map[door_row][door_col] = 0;
             showMessage("DOOR UNLOCKED");
             Sound.play("door_open.wav", menu.volume);
         } else {
@@ -326,11 +328,8 @@ public class Display extends Canvas implements Runnable
     {
         double dx = exit_x - player.x;
         double dy = exit_y - player.y;
-        if (dx * dx + dy * dy < 0.6 * 0.6) {
+        if (dx * dx + dy * dy < 0.6 * 0.6)
             state = GameState.WON;
-            if (current_level == menu.unlocked && menu.unlocked < 3)
-                menu.unlocked += 1;
-        }
     }
     
     private void render()
@@ -345,32 +344,34 @@ public class Display extends Canvas implements Runnable
         
         renderer.setCamera(player.x, player.y, player.angle);
         
-        renderer.drawFlats();
-        renderer.drawWalls();
-        renderer.drawThing(imp_x, imp_y, 1 * Math.PI, imp_textures);
-        renderer.drawSprite(dopefish_x, dopefish_y, dopefish_texture);
-        renderer.drawSprite(exit_x, exit_y, exit_texture);
+        renderer.putThing(imp_x, imp_y, 1 * Math.PI, imp_textures);
+        renderer.putSprite(dopefish_x, dopefish_y, dopefish_texture);
+        renderer.putSprite(exit_x, exit_y, exit_texture);
         for (int i = 0; i < items.length; i++) {
             if (items[i].taken == false)
-                renderer.drawSprite(items[i].x, items[i].y, item_textures[items[i].type]);
+                renderer.putSprite(items[i].x, items[i].y, item_textures[items[i].type]);
         }
         
+        renderer.draw();
+        
+        BufferedImage device = renderer.getRender();
+        
         if (state == GameState.MENU) {
-            menu.draw(renderer.device, time_current);
+            menu.draw(device, time_current);
         } else {
-            hud.draw(renderer.device, player);
+            hud.draw(device, player);
             if (state == GameState.PAUSED)
-                hud.drawPause(renderer.device);
+                hud.drawPause(device);
             if (state == GameState.WON)
-                hud.drawEnd(renderer.device, "YOU GOT OUT!", "ENTER: level menu   ESC: main menu");
+                hud.drawEnd(device, "YOU GOT OUT!", "ENTER: level menu   ESC: main menu");
             if (state == GameState.LOST)
-                hud.drawEnd(renderer.device, "YOU DIED", "ENTER: try again   ESC: main menu");
+                hud.drawEnd(device, "YOU DIED", "ENTER: try again   ESC: main menu");
             if (time_current - message_time < 2000)
-                hud.drawMessage(renderer.device, message);
+                hud.drawMessage(device, message);
         }
         
         Graphics g = bs.getDrawGraphics();
-        g.drawImage(renderer.device, 0, 0, WIDTH, HEIGHT, null); // Does this cause a race condition? I hope not... Supposedly this function *can* be asynchronous.
+        g.drawImage(device, 0, 0, WIDTH, HEIGHT, null); // Does this cause a race condition? I hope not... Supposedly this function *can* be asynchronous.
         g.dispose();
         bs.show();
     }
