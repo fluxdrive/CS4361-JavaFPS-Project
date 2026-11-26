@@ -65,6 +65,43 @@ public class Display extends Canvas implements Runnable
         {2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
     
+    // Level 3, frozen caverns. 1, 2 and 7 cave rock, 3, 8 and 9 ice crystal clusters, 4 icicles,
+    // 5 ice pocket with a frozen skull, 6 door. Icicle walls (4) surround the boss room and the exit wing.
+    // Doors (6) are at row 17, column 24 (into the boss room) and row 8, column 28 (into the exit room).
+    private int[][] level3 = {
+        {1,1,2,9,1,2,2,2,1,1,2,7,1,1,2,7,1,7,1,1,1,1,2,1,2,4,4,4,4,4,4,4,1},
+        {7,0,0,0,0,0,2,1,1,0,0,0,0,0,0,3,2,1,2,1,1,1,2,1,4,0,0,0,0,0,0,0,4},
+        {7,0,0,0,0,0,1,3,1,0,0,0,0,0,0,7,1,1,1,1,2,1,1,7,4,0,0,0,0,0,0,0,4},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,4,0,4,0,0,0,4,0,4},
+        {8,0,0,0,0,0,7,1,2,0,0,0,0,1,0,1,7,1,1,5,1,2,0,7,4,0,0,0,0,0,0,0,4},
+        {1,0,0,0,0,0,2,1,1,0,7,0,0,0,0,2,7,1,2,2,2,2,0,2,4,0,4,0,0,0,4,0,4},
+        {7,2,7,0,2,9,1,2,7,0,0,0,0,0,0,7,2,2,7,1,7,0,0,0,4,0,0,0,0,0,0,0,4},
+        {1,1,2,0,2,1,2,7,1,2,1,0,7,2,9,2,2,2,2,1,1,0,0,0,4,0,0,0,0,0,0,0,4},
+        {2,7,1,0,1,1,1,7,1,8,1,0,1,1,1,2,7,1,1,1,2,0,0,0,4,4,4,4,6,4,4,4,7},
+        {1,0,0,0,0,0,0,7,1,0,0,0,0,0,0,0,0,0,7,1,7,0,0,0,4,4,0,0,0,0,0,4,7},
+        {5,0,0,0,0,1,0,1,1,0,7,0,0,0,0,7,0,0,5,1,7,0,0,0,4,4,0,0,0,0,0,4,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,7,7,0,0,0,4,4,4,4,0,4,4,4,1},
+        {2,0,2,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,7,1,1,0,0,1,4,0,0,0,0,0,0,0,4},
+        {1,0,0,0,0,0,0,1,1,0,0,0,1,1,2,0,0,0,7,1,2,0,0,0,4,0,0,0,0,0,0,0,4},
+        {1,2,1,1,1,1,2,1,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,4,0,4,0,0,4},
+        {2,1,1,7,2,3,1,7,1,0,1,7,0,0,0,7,7,0,7,5,1,0,0,0,4,0,0,0,0,0,0,0,4},
+        {7,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,4,0,0,0,0,0,0,0,4},
+        {8,0,0,0,0,0,0,0,1,2,2,1,2,0,1,7,2,7,2,7,1,0,0,0,6,0,0,0,0,0,0,0,4},
+        {2,0,0,0,0,0,0,0,2,5,1,0,0,0,0,0,0,0,1,2,1,0,0,0,4,0,0,0,0,0,0,0,4},
+        {1,0,0,1,1,2,0,0,0,0,0,0,0,0,0,0,0,0,2,7,1,2,1,3,4,0,0,4,0,4,0,0,4},
+        {1,0,0,0,0,0,0,0,1,7,1,0,0,0,0,0,0,0,1,7,7,2,2,7,4,0,0,0,0,0,0,0,4},
+        {7,0,0,0,0,0,0,0,7,1,2,1,1,7,7,1,1,8,2,1,1,7,1,1,4,0,0,0,0,0,0,0,4},
+        {1,2,7,9,1,1,1,1,1,1,1,7,1,7,7,7,7,7,1,7,1,7,1,1,2,4,4,4,4,4,4,4,7}
+    };
+    
+    // Level 3 enemy spawns (E) and final boss (B) from the layout. Enemies aren't in the game yet,
+    // so nothing uses these until someone adds them. Same x, y tile coordinates as the items.
+    private double[][] level3_enemies = {
+        {6.5, 20.5}, {26.5, 20.5}, {12.5, 19.5}, {5.5, 17.5}, {11.5, 14.5}, {21.5, 14.5}, {16.5, 13.5},
+        {30.5, 13.5}, {5.5, 12.5}, {3.5, 11.5}, {12.5, 10.5}, {22.5, 9.5}, {21.5, 7.5}, {13.5, 5.5}
+    };
+    private double[] level3_boss = {28.5, 16.5};
+    
     private Player player = new Player(2.5, 2.5, 0.0);
     private Hud hud = new Hud();
     private Menu menu = new Menu();
@@ -81,6 +118,21 @@ public class Display extends Canvas implements Runnable
     private double exit_y = 2.5;
     private int door_row = 5;
     private int door_col = 22;
+    
+    // Level 3's exit room door opens when the final boss is defeated, not with a key (openBossDoor).
+    // -1 means the level has no boss door (levels 1 and 2)
+    private int boss_door_row = -1;
+    private int boss_door_col = -1;
+    
+    // Texture sets for each level, loaded once at startup.
+    private Renderer.Texture[] castle_walls;
+    private Renderer.Texture castle_floor;
+    private Renderer.Texture castle_ceiling;
+    private Renderer.Texture castle_exit;
+    private Renderer.Texture[] ice_walls;
+    private Renderer.Texture ice_floor;
+    private Renderer.Texture ice_ceiling;
+    private Renderer.Texture ice_exit;
     private String message = "";
     private double message_time = 0;
     
@@ -105,13 +157,33 @@ public class Display extends Canvas implements Runnable
         setMaximumSize(size);
         
         renderer = new Renderer();
-        current_map = level1;
-        renderer.setWalls(current_map);
-        
         try {
-            renderer.setWallTextures(Renderer.Texture.read(new BufferedImage[] {ImageIO.read(new File("castle_wall.png")), ImageIO.read(new File("castle_wall_mossy.png")), ImageIO.read(new File("castle_torch.png")), ImageIO.read(new File("castle_banner.png")), ImageIO.read(new File("castle_window.png")), ImageIO.read(new File("castle_door.png"))}));
-            renderer.setFloorTexture(new Renderer.Texture(ImageIO.read(new File("castle_floor.png"))));
-            renderer.setCeilingTexture(new Renderer.Texture(ImageIO.read(new File("castle_ceiling.png"))));
+            castle_walls = Renderer.Texture.read(new BufferedImage[] {
+                ImageIO.read(new File("castle_wall.png")),
+                ImageIO.read(new File("castle_wall_mossy.png")),
+                ImageIO.read(new File("castle_torch.png")),
+                ImageIO.read(new File("castle_banner.png")),
+                ImageIO.read(new File("castle_window.png")),
+                ImageIO.read(new File("castle_door.png"))
+            });
+            castle_floor = new Renderer.Texture(ImageIO.read(new File("castle_floor.png")));
+            castle_ceiling = new Renderer.Texture(ImageIO.read(new File("castle_ceiling.png")));
+            castle_exit = new Renderer.Texture(ImageIO.read(new File("castle_exit.png")));
+            // Level 3 wall numbers: the Nth image here is wall N in the level3 map.
+            ice_walls = Renderer.Texture.read(new BufferedImage[] {
+                ImageIO.read(new File("ice_wall.png")),      // 1 cave rock
+                ImageIO.read(new File("ice_rock2.png")),     // 2 cave rock
+                ImageIO.read(new File("ice_crystal.png")),   // 3 crystal cluster
+                ImageIO.read(new File("ice_icicles.png")),   // 4 icicles
+                ImageIO.read(new File("ice_window.png")),    // 5 frozen skull
+                ImageIO.read(new File("ice_door.png")),      // 6 door
+                ImageIO.read(new File("ice_rock3.png")),     // 7 cave rock
+                ImageIO.read(new File("ice_crystal2.png")),  // 8 crystal cluster
+                ImageIO.read(new File("ice_crystal3.png"))   // 9 crystal cluster
+            });
+            ice_floor = new Renderer.Texture(ImageIO.read(new File("ice_floor.png")));
+            ice_ceiling = new Renderer.Texture(ImageIO.read(new File("ice_ceiling.png")));
+            ice_exit = new Renderer.Texture(ImageIO.read(new File("ice_exit.png")));
             imp_textures = Renderer.Texture.read(new BufferedImage[] {
                 ImageIO.read(new File("imp0.png")),
                 ImageIO.read(new File("imp1.png")),
@@ -129,16 +201,16 @@ public class Display extends Canvas implements Runnable
                 ImageIO.read(new File("health.png")),
                 ImageIO.read(new File("gun.png"))
             });
-            exit_texture = new Renderer.Texture(ImageIO.read(new File("castle_exit.png")));
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
         
+        loadLevel(1);
+        
         input = new Input();
         addKeyListener(input);
         random = new Random();
-        items = makeItems();
     }
     
     private void start()
@@ -231,19 +303,65 @@ public class Display extends Canvas implements Runnable
     
     private void startLevel(int number)
     {
-        if (number == 1) {
-            current_level = 1;
+        if (loadLevel(number)) {
+            current_level = number;
             newGame();
         } else {
             menu.note = "LEVEL " + number + " IS NOT BUILT YET";
         }
     }
     
+    // Sets up the map, textures, items, doors and exit for a level.
+    // Returns false if that level doesn't exist yet. To add a level, add another "else if" block.
+    private boolean loadLevel(int number)
+    {
+        if (number == 1) {
+            current_map = copyMap(level1);
+            renderer.setWallTextures(castle_walls);
+            renderer.setFloorTexture(castle_floor);
+            renderer.setCeilingTexture(castle_ceiling);
+            exit_texture = castle_exit;
+            exit_x = 23.5;
+            exit_y = 2.5;
+            door_row = 5;
+            door_col = 22;
+            boss_door_row = -1;
+            boss_door_col = -1;
+            items = makeItems();
+        } else if (number == 3) {
+            current_map = copyMap(level3);
+            renderer.setWallTextures(ice_walls);
+            renderer.setFloorTexture(ice_floor);
+            renderer.setCeilingTexture(ice_ceiling);
+            exit_texture = ice_exit;
+            exit_x = 28.5;
+            exit_y = 2.5;
+            door_row = 17;
+            door_col = 24;
+            boss_door_row = 8;
+            boss_door_col = 28;
+            items = makeLevel3Items();
+        } else {
+            return false;
+        }
+        
+        renderer.setWalls(current_map);
+        return true;
+    }
+    
+    // Works on a copy so opened doors are closed again when the level restarts.
+    private int[][] copyMap(int[][] map)
+    {
+        int[][] copy = new int[map.length][];
+        for (int i = 0; i < map.length; i++)
+            copy[i] = map[i].clone();
+        return copy;
+    }
+
     private void newGame()
     {
+        loadLevel(current_level);
         player = new Player(2.5, 2.5, 0.0);
-        current_map[door_row][door_col] = 6;
-        items = makeItems();
         state = GameState.PLAYING;
     }
     
@@ -257,6 +375,29 @@ public class Display extends Canvas implements Runnable
         };
     }
     
+    private Item[] makeLevel3Items()
+    {
+        return new Item[] {
+            new Item(2.5, 20.5, Item.KEY),
+            new Item(16.5, 10.5, Item.GUN),
+            new Item(17.5, 12.5, Item.AMMO),
+            new Item(10.5, 2.5, Item.AMMO),
+            new Item(15.5, 20.5, Item.HEALTH),
+            new Item(22.5, 5.5, Item.HEALTH)
+        };
+    }
+
+    // Opens the boss door (level 3) call when the boss is killed
+    private void openBossDoor()
+    {
+        if (boss_door_row < 0 || current_map[boss_door_row][boss_door_col] == 0)
+            return;
+        
+        current_map[boss_door_row][boss_door_col] = 0;
+        showMessage("THE WAY OUT IS OPEN");
+        Sound.play("door_open.wav", menu.volume);
+    }
+
     private void showMessage(String text)
     {
         message = text;
@@ -344,8 +485,10 @@ public class Display extends Canvas implements Runnable
         
         renderer.setCamera(player.x, player.y, player.angle);
         
-        renderer.putThing(imp_x, imp_y, 1 * Math.PI, imp_textures);
-        renderer.putSprite(dopefish_x, dopefish_y, dopefish_texture);
+        if (current_level == 1) {
+            renderer.putThing(imp_x, imp_y, 1 * Math.PI, imp_textures);
+            renderer.putSprite(dopefish_x, dopefish_y, dopefish_texture);
+        }
         renderer.putSprite(exit_x, exit_y, exit_texture);
         for (int i = 0; i < items.length; i++) {
             if (items[i].taken == false)
