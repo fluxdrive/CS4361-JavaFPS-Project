@@ -64,7 +64,42 @@ public class Display extends Canvas implements Runnable
         {2,0,0,0,0,0,0,0,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1},
         {2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
+
+    // Enemy positions from map, same x, y tile coordinates as the items (unused until enemies are added)
+    private double[][] level1_enemies = {
+        {5.5, 12.5}, {21.5, 11.5}, {19.5, 8.5}, {24.5, 8.5}
+    };
+
+    // Level 2, underground lab. 1 concrete panel, 2 pipe drop with valve, 3 caged lamp, 4 steel blast wall,
+    // 5 vent grille, 6 door, 7 access panel, 8 hazard sign. Blast walls (4) surround the exit area.
+    // Door (6) is at row 4, column 25 (into the exit area).
+    private int[][] level2 = {
+        {7,1,1,7,5,7,2,1,1,1,1,7,5,1,1,1,1,1,1,1,1,2,4,4,4,4,4,4,2},
+        {8,0,0,0,0,0,1,7,1,0,0,0,0,0,1,1,2,2,1,7,2,4,0,0,0,0,0,0,4},
+        {1,0,0,0,0,0,0,0,0,0,1,0,0,0,8,1,1,2,7,1,1,4,0,0,0,0,0,0,4},
+        {7,0,0,0,0,0,1,3,1,0,0,0,0,0,1,1,2,1,2,1,7,4,0,0,0,0,0,0,4},
+        {1,0,0,0,0,0,7,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,4,4,4,6,4,4,1},
+        {1,5,1,0,7,3,1,1,2,7,2,0,2,1,1,7,1,2,3,1,1,2,4,4,4,0,4,4,7},
+        {1,2,1,0,1,1,2,1,8,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,2,7,0,0,0,0,0,0,0,0,0,0,0,3,1,0,0,0,0,0,0,3},
+        {7,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,0,0,0,2,1,0,0,0,0,0,0,7},
+        {3,0,0,0,0,0,0,7,7,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1},
+        {1,0,0,0,0,0,0,3,1,0,0,2,0,0,0,0,0,0,1,0,1,7,0,0,7,0,1,0,1},
+        {7,1,1,7,1,1,1,7,7,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,7},
+        {7,0,0,0,0,0,0,0,1,7,1,7,2,7,1,0,2,3,1,2,1,1,0,0,0,0,0,0,3},
+        {2,0,0,0,0,0,0,0,3,2,1,1,5,1,2,0,1,7,1,1,7,3,1,1,0,1,1,1,1},
+        {3,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,2,0,0,0,0,0,0,0,1},
+        {1,0,0,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {2,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,2,0,0,0,1},
+        {1,0,0,0,0,0,0,0,1,7,0,0,0,0,0,0,0,0,0,7,1,0,0,0,0,0,0,0,5},
+        {2,7,1,8,1,1,1,1,1,7,5,2,7,1,8,1,7,7,3,1,2,1,2,8,2,1,1,1,1}
+    };
     
+    // Enemy positions from map, same x, y tile coordinates as the items (unused until enemies are added)
+    private double[][] level2_enemies = {
+        {11.5, 16.5}, {23.5, 15.5}, {5.5, 14.5}, {23.5, 11.5}, {17.5, 10.5}, {3.5, 9.5}, {12.5, 8.5}, {26.5, 7.5}
+    };
+
     // Level 3, frozen caverns. 1, 2 and 7 cave rock, 3, 8 and 9 ice crystal clusters, 4 icicles,
     // 5 ice pocket with a frozen skull, 6 door. Icicle walls (4) surround the boss room and the exit wing.
     // Doors (6) are at row 17, column 24 (into the boss room) and row 8, column 28 (into the exit room).
@@ -94,12 +129,12 @@ public class Display extends Canvas implements Runnable
         {1,2,7,9,1,1,1,1,1,1,1,7,1,7,7,7,7,7,1,7,1,7,1,1,2,4,4,4,4,4,4,4,7}
     };
     
-    // Level 3 enemy spawns (E) and final boss (B) from the layout. Enemies aren't in the game yet,
-    // so nothing uses these until someone adds them. Same x, y tile coordinates as the items.
+    // Enemy positions from map, same x, y tile coordinates as the items (unused until enemies are added)
     private double[][] level3_enemies = {
         {6.5, 20.5}, {26.5, 20.5}, {12.5, 19.5}, {5.5, 17.5}, {11.5, 14.5}, {21.5, 14.5}, {16.5, 13.5},
         {30.5, 13.5}, {5.5, 12.5}, {3.5, 11.5}, {12.5, 10.5}, {22.5, 9.5}, {21.5, 7.5}, {13.5, 5.5}
     };
+    // Level 3 Boss spawn, same as enemies for x, y, unused until boss is implemented
     private double[] level3_boss = {28.5, 16.5};
     
     private Player player = new Player(2.5, 2.5, 0.0);
@@ -133,6 +168,10 @@ public class Display extends Canvas implements Runnable
     private Renderer.Texture ice_floor;
     private Renderer.Texture ice_ceiling;
     private Renderer.Texture ice_exit;
+    private Renderer.Texture[] lab_walls;
+    private Renderer.Texture lab_floor;
+    private Renderer.Texture lab_ceiling;
+    private Renderer.Texture lab_exit;
     private String message = "";
     private double message_time = 0;
     
@@ -184,6 +223,21 @@ public class Display extends Canvas implements Runnable
             ice_floor = new Renderer.Texture(ImageIO.read(new File("ice_floor.png")));
             ice_ceiling = new Renderer.Texture(ImageIO.read(new File("ice_ceiling.png")));
             ice_exit = new Renderer.Texture(ImageIO.read(new File("ice_exit.png")));
+            
+            // Level 2 wall numbers: the Nth image here is wall N in the level2 map.
+            lab_walls = Renderer.Texture.read(new BufferedImage[] {
+                ImageIO.read(new File("lab_wall.png")),    // 1 concrete panel
+                ImageIO.read(new File("lab_pipes.png")),   // 2 pipe drop with valve
+                ImageIO.read(new File("lab_light.png")),   // 3 caged lamp
+                ImageIO.read(new File("lab_secure.png")),  // 4 steel blast wall
+                ImageIO.read(new File("lab_vent.png")),    // 5 vent grille
+                ImageIO.read(new File("lab_door.png")),    // 6 door
+                ImageIO.read(new File("lab_panel.png")),   // 7 access panel
+                ImageIO.read(new File("lab_sign.png"))     // 8 hazard sign
+            });
+            lab_floor = new Renderer.Texture(ImageIO.read(new File("lab_floor.png")));
+            lab_ceiling = new Renderer.Texture(ImageIO.read(new File("lab_ceiling.png")));
+            lab_exit = new Renderer.Texture(ImageIO.read(new File("lab_exit.png")));
             imp_textures = Renderer.Texture.read(new BufferedImage[] {
                 ImageIO.read(new File("imp0.png")),
                 ImageIO.read(new File("imp1.png")),
@@ -312,7 +366,7 @@ public class Display extends Canvas implements Runnable
     }
     
     // Sets up the map, textures, items, doors and exit for a level.
-    // Returns false if that level doesn't exist yet. To add a level, add another "else if" block.
+    // Returns false if that level doesn't exist yet.
     private boolean loadLevel(int number)
     {
         if (number == 1) {
@@ -328,6 +382,19 @@ public class Display extends Canvas implements Runnable
             boss_door_row = -1;
             boss_door_col = -1;
             items = makeItems();
+        } else if (number == 2) {
+            current_map = copyMap(level2);
+            renderer.setWallTextures(lab_walls);
+            renderer.setFloorTexture(lab_floor);
+            renderer.setCeilingTexture(lab_ceiling);
+            exit_texture = lab_exit;
+            exit_x = 26.5;
+            exit_y = 2.5;
+            door_row = 4;
+            door_col = 25;
+            boss_door_row = -1;
+            boss_door_col = -1;
+            items = makeLevel2Items();
         } else if (number == 3) {
             current_map = copyMap(level3);
             renderer.setWallTextures(ice_walls);
@@ -375,6 +442,16 @@ public class Display extends Canvas implements Runnable
         };
     }
     
+    private Item[] makeLevel2Items()
+    {
+        return new Item[] {
+            new Item(2.5, 16.5, Item.KEY),
+            new Item(17.5, 7.5, Item.GUN),
+            new Item(10.5, 3.5, Item.AMMO),
+            new Item(26.5, 16.5, Item.HEALTH)
+        };
+    }
+
     private Item[] makeLevel3Items()
     {
         return new Item[] {
